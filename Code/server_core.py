@@ -1,5 +1,6 @@
 import socket
-from common.protocol import receive_message, send_message, CMD_REQ_CONNECT, CMD_RES_CONNECT
+from common.protocol import receive_message, send_message, CMD_REQ_CONNECT, CMD_RES_CONNECT, CMD_MOUSE, CMD_KEY
+from server.input_executor import process_input_command
 
 def start_server(ip="0.0.0.0", port=9999):
     # Khởi tạo Socket TCP
@@ -31,7 +32,8 @@ def start_server(ip="0.0.0.0", port=9999):
                 if not msg_cmd:
                     break
                 print(f"[SERVER] Nhận lệnh {msg_cmd} có kích thước {len(msg_payload)} bytes")
-                # Truyền cho TV3 xử lý input ở đây
+                if msg_cmd in (CMD_MOUSE, CMD_KEY):
+                    process_input_command(msg_cmd, msg_payload)
             except Exception as e:
                 print(f"[SERVER] Lỗi: {e}")
                 break
