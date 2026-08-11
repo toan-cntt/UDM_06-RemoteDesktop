@@ -1,7 +1,7 @@
 import socket
 from common.protocol import receive_message, send_message, CMD_REQ_CONNECT, CMD_RES_CONNECT
 
-def start_server(ip="0.0.0.0", port=9999):
+def start_server(ip="0.0.0.0", port=9999, on_connection_request=None):
     # Khởi tạo Socket TCP
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((ip, port))
@@ -21,8 +21,30 @@ def start_server(ip="0.0.0.0", port=9999):
         
         # Tạm thời fix cứng là Đồng ý (Gửi mã 1)
         # Bọc mã 1 thành bytes: bytearray([1])
-        send_message(client_socket, CMD_RES_CONNECT, bytearray([1]))
-        print("[SERVER] Đã cho phép. Bắt đầu phiên!")
+        if on_connection_request:
+
+            result = on_connection_request(
+                client_address[0]
+            )
+
+        else:
+
+            # Nếu không có GUI thì mặc định TỪ CHỐI
+            result = False
+
+        if result:
+
+            # GUI CHẤP NHẬN
+            send_message(
+                client_socket,
+                CMD_RES_CONNECT,
+                bytearray([1])
+            )
+
+            print(
+                "[SERVER] Đã cho phép. "
+                "Bắt đầu phiên!"
+            )
 
         # Vòng lặp nhận dữ liệu điều khiển (chuột, phím) liên tục
         while True:
