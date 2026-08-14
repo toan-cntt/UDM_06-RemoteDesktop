@@ -606,15 +606,13 @@ class HostGUI(QWidget):
 # =========================================================
 
 if __name__ == "__main__":
-
-    app = QApplication(
-        sys.argv
-    )
+    app = QApplication(sys.argv)
+    
+    # --- CHÈN THÊM DÒNG NÀY ĐỂ NẠP DARK MODE ---
+    with open("style.qss", "r", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
+    # -------------------------------------------
 
     window = HostGUI()
-
     window.show()
-
-    sys.exit(
-        app.exec_()
-    )
+    sys.exit(app.exec_())
