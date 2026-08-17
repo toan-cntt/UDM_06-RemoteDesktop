@@ -83,6 +83,39 @@ ip_layout.addWidget(ip_label)
 ip_layout.addWidget(ip_input)
 
 main_layout.addLayout(ip_layout)
+# =========================
+# ID ĐỐI TÁC
+# =========================
+
+partner_id_layout = QHBoxLayout()
+
+partner_id_label = QLabel("ID đối tác:")
+
+partner_id_input = QLineEdit()
+partner_id_input.setPlaceholderText("Nhập ID đối tác")
+
+partner_id_layout.addWidget(partner_id_label)
+partner_id_layout.addWidget(partner_id_input)
+
+main_layout.addLayout(partner_id_layout)
+
+
+# =========================
+# MẬT KHẨU
+# =========================
+
+password_layout = QHBoxLayout()
+
+password_label = QLabel("Mật khẩu:")
+
+password_input = QLineEdit()
+password_input.setPlaceholderText("Nhập mật khẩu")
+password_input.setEchoMode(QLineEdit.Password)
+
+password_layout.addWidget(password_label)
+password_layout.addWidget(password_input)
+
+main_layout.addLayout(password_layout)
 
 
 # =========================
@@ -302,24 +335,6 @@ def disconnect_from_server():
 
 connect_button.clicked.connect(connect_to_server)
 disconnect_button.clicked.connect(disconnect_from_server)
-
-
-# =========================
-# CHẠY GUI
-# =========================
-
-window.show()
-
-sys.exit(app.exec_())
-
-
-connect_button.clicked.connect(
-    connect_to_server
-)
-
-disconnect_button.clicked.connect(
-    disconnect_from_server
-)
 
 
 # =========================
