@@ -1,6 +1,8 @@
 import sys
 import socket
 
+from client.image_receiver import ImageReceiverThread
+from client.input_listener import InputEventFilter
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
@@ -22,36 +24,7 @@ from common.protocol import (
     CMD_SCREEN
 )
 
-
-class ScreenReceiver(QThread):
-    frame_received = pyqtSignal(bytes)
-    connection_error = pyqtSignal(str)
-
-    def __init__(self, client_socket):
-        super().__init__()
-        self.client_socket = client_socket
-        self.running = True
-
-    def run(self):
-        while self.running:
-            try:
-                cmd_type, payload = receive_message(
-                    self.client_socket
-                )
-
-                if not cmd_type:
-                    break
-
-                if cmd_type == CMD_SCREEN and self.running:
-                    self.frame_received.emit(payload)
-
-            except Exception as e:
-                if self.running:
-                    self.connection_error.emit(str(e))
-                break
-
-    def stop(self):
-        self.running = False
+"""Xóa Class Screen Receiver, thay bằng module image_receiver.py"""
 
 app = QApplication(sys.argv)
 
@@ -143,7 +116,7 @@ screen_label.setStyleSheet("""
     background-color: lightgray;
 """)
 
-screen_label.setAlignment(Qt.AlignCenter)
+screen_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  #Qt.AlignCenter
 
 main_layout.addWidget(screen_label)
 
@@ -152,23 +125,17 @@ main_layout.addWidget(screen_label)
 # HIỂN THỊ FRAME
 # =========================
 
-def update_screen(frame_data):
-    image = QImage()
+"""Thay đổi hàm update screen"""
+def update_screen(image):
+    pixmap = QPixmap.fromImage(image)
 
-    if image.loadFromData(frame_data, "JPEG"):
+    scaled_pixmap = pixmap.scaled(
+        screen_label.size(),
+        Qt.KeepAspectRatio,
+        Qt.SmoothTransformation
+    )
 
-        pixmap = QPixmap.fromImage(image)
-
-        scaled_pixmap = pixmap.scaled(
-            screen_label.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        )
-
-        screen_label.setPixmap(scaled_pixmap)
-
-    else:
-        print("[CLIENT] Không thể đọc frame JPEG")
+    screen_label.setPixmap(scaled_pixmap)
 
 
 # =========================
@@ -205,7 +172,7 @@ def connect_to_server():
             client_socket,
             CMD_REQ_CONNECT
         )
-
+    
         # Chờ Server phản hồi
         cmd_type, payload = receive_message(client_socket)
 
@@ -215,19 +182,24 @@ def connect_to_server():
 
             print("[CLIENT] Server đã cho phép!")
 
-            # Tạo thread nhận màn hình
-            screen_receiver = ScreenReceiver(client_socket)
+            # Tạo thread nhận và decode màn hình
+            screen_receiver = ImageReceiverThread(
+                client_socket
+            )
 
-            screen_receiver.frame_received.connect(
+            # Nhận QImage từ thread
+            screen_receiver.image_received.connect(
                 update_screen
             )
 
+            # Xử lý lỗi kết nối
             screen_receiver.connection_error.connect(
                 lambda error: status.showMessage(
                     f"Lỗi nhận màn hình: {error}"
                 )
             )
 
+            # Bắt đầu thread
             screen_receiver.start()
 
         else:
@@ -266,11 +238,12 @@ def disconnect_from_server():
 
     # Dừng thread nhận màn hình
     if screen_receiver:
+
         screen_receiver.stop()
 
         try:
             screen_receiver.wait(1000)
-        except:
+        except Exception:
             pass
 
         screen_receiver = None
@@ -325,6 +298,12 @@ disconnect_button.clicked.connect(
 # =========================
 # CHẠY GUI
 # =========================
+
+#Kết nối sreen label với Event Filter
+input_filter = InputEventFilter(client_socket)
+screen_label.installEventFilter(input_filter)
+screen_label.setMouseTracking(True)
+
 
 window.show()
 
