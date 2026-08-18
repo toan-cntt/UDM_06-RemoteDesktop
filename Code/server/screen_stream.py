@@ -1,43 +1,63 @@
-import io
 import time
 import mss
-from PIL import Image
+import numpy as np
+import cv2
+
 from common.protocol import send_message, CMD_SCREEN
 
-def capture_screen(quality=70):
-    # Chụp màn hình và nén thành JPEG
-    # Trả về dữ liệu ảnh dưới dạng bytes
 
-    with mss.MSS() as sct:
-        # monitors[0] = toàn bộ màn hình
-        # monitors[1] = màn hình chính
-        monitor = sct.monitors[1]
+def capture_screen(sct, quality=70, scale=0.75):
+    # Chụp màn hình và nén thành JPEG bằng OpenCV
 
-        screenshot = sct.grab(monitor)
+    # monitors[1] = màn hình chính
+    monitor = sct.monitors[1]
 
-        # Chuyển ảnh MSS sang Pillow
-        image = Image.frombytes(
-            "RGB",
-            screenshot.size,
-            screenshot.rgb
+    # Chụp màn hình
+    screenshot = sct.grab(monitor)
+
+    # Chuyển ảnh MSS sang NumPy array
+    frame = np.array(screenshot)
+
+    # Chuyển BGRA sang BGR
+    frame = cv2.cvtColor(
+        frame,
+        cv2.COLOR_BGRA2BGR
+    )
+
+    # Resize để giảm dung lượng truyền
+    if scale != 1.0:
+        frame = cv2.resize(
+            frame,
+            None,
+            fx=scale,
+            fy=scale,
+            interpolation=cv2.INTER_AREA
         )
 
-        # Lưu ảnh vào bộ nhớ
-        buffer = io.BytesIO()
+    # Nén JPEG
+    success, encoded_image = cv2.imencode(
+        ".jpg",
+        frame,
+        [
+            cv2.IMWRITE_JPEG_QUALITY,
+            quality
+        ]
+    )
 
-        # Nén thành JPEG
-        image.save(
-            buffer,
-            format="JPEG",
-            quality=quality
-        )
+    if not success:
+        raise RuntimeError("Không thể nén ảnh màn hình")
 
-        return buffer.getvalue()
+    return encoded_image.tobytes()
 
-def send_screen(sock, quality=70):
+
+def send_screen(sct, sock, quality=70, scale=0.75):
     # Chụp màn hình, nén JPEG và gửi qua TCP
 
-    image_bytes = capture_screen(quality)
+    image_bytes = capture_screen(
+        sct,
+        quality=quality,
+        scale=scale
+    )
 
     send_message(
         sock,
@@ -45,21 +65,27 @@ def send_screen(sock, quality=70):
         image_bytes
     )
 
-def screen_stream(sock, fps=10, quality=70):
+
+def screen_stream(sock, fps=20, quality=70, scale=0.75):
     # Liên tục chụp và gửi màn hình
-    # sock: TCP socket
-    # fps: số frame mỗi giây
-    # quality: chất lượng JPEG
 
     delay = 1 / fps
 
-    while True:
-        start_time = time.time()
+    # Chỉ tạo MSS một lần
+    with mss.MSS() as sct:
 
-        send_screen(sock, quality)
+        while True:
+            start_time = time.perf_counter()
 
-        elapsed = time.time() - start_time
-        sleep_time = delay - elapsed
+            send_screen(
+                sct,
+                sock,
+                quality=quality,
+                scale=scale
+            )
 
-        if sleep_time > 0:
-            time.sleep(sleep_time)
+            elapsed = time.perf_counter() - start_time
+            sleep_time = delay - elapsed
+
+            if sleep_time > 0:
+                time.sleep(sleep_time)
