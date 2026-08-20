@@ -1,0 +1,80 @@
+/* =========================================
+   GIAO DIỆN DARK MODE - REMOTE DESKTOP
+========================================= */
+
+/* Nền tảng chung cho toàn bộ cửa sổ */
+QWidget {
+    background-color: #1e1e2e; /* Xám đen hiện đại */
+    color: #cdd6f4; /* Trữ trắng sáng */
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+}
+
+/* Các nhãn text (Label) */
+QLabel {
+    color: #bac2de;
+    font-weight: bold;
+}
+
+/* Ô nhập liệu (Input ID, Pass, Port) */
+QLineEdit, QSpinBox {
+    background-color: #313244;
+    border: 1px solid #45475a;
+    border-radius: 6px;
+    padding: 8px;
+    color: #f38ba8; /* Màu chữ nổi bật cho ID/Pass */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+QLineEdit:focus, QSpinBox:focus {
+    border: 2px solid #89b4fa; /* Viền xanh sáng khi click vào */
+}
+
+/* Nút bấm (Button) */
+QPushButton {
+    background-color: #89b4fa; /* Xanh dương chủ đạo */
+    color: #11111b;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #b4befe; /* Sáng lên khi di chuột */
+}
+
+QPushButton:pressed {
+    background-color: #74c7ec; /* Đổi màu khi bấm */
+}
+
+QPushButton:disabled {
+    background-color: #45475a;
+    color: #a6adc8;
+}
+
+/* Khung viền (Group Box) */
+QGroupBox {
+    border: 2px solid #313244;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #cdd6f4;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 10px;
+}
+
+/* Khung hiển thị Log */
+QTextEdit {
+    background-color: #181825;
+    border: 1px solid #313244;
+    border-radius: 6px;
+    color: #a6e3a1; /* Log màu xanh lá kiểu hacker */
+    padding: 5px;
+}

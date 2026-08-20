@@ -12,6 +12,10 @@ CMD_SCREEN      = 3   # Dữ liệu ảnh màn hình
 CMD_MOUSE       = 4   # Tọa độ chuột
 CMD_KEY         = 5   # Phím bấm
 
+# --- [BỔ SUNG SPRINT 2] MÃ LỆNH XÁC THỰC MỚI ---
+CMD_AUTH_REQ    = 10  # Client gửi yêu cầu kết nối kèm theo: JSON chứa ID và Password
+CMD_AUTH_RES    = 11  # Server phản hồi kết quả xác thực (1 = Thành công, 0 = Thất bại)
+
 def send_message(sock: socket.socket, cmd_type: int, payload: bytes = b''):
     """Hàm đóng gói dữ liệu và gửi đi"""
     # Tính độ dài của cục dữ liệu (payload)
