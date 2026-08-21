@@ -2,7 +2,7 @@ import sys
 import threading
 import logging
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -93,6 +93,50 @@ class HostGUI(QWidget):
         )
 
         main_layout.addWidget(title)
+
+        # -------------------------------------------------
+        # HOST CREDENTIALS
+        # -------------------------------------------------
+
+        credential_group = QGroupBox("Thông tin kết nối")
+
+        credential_group.setObjectName("credentialGroup")
+
+        credential_layout = QVBoxLayout()
+
+        # ID
+        id_title = QLabel("MÃ ID CỦA BẠN")
+
+        id_title.setObjectName("credentialTitle")
+
+        self.id_display = QLabel("123456")
+
+        self.id_display.setObjectName("credentialValue")
+
+        self.id_display.setAlignment(Qt.AlignCenter)
+
+        # Password
+        password_title = QLabel("MẬT KHẨU")
+
+        password_title.setObjectName("credentialTitle")
+
+        self.password_display = QLabel("1234")
+
+        self.password_display.setObjectName("credentialValue")
+
+        self.password_display.setAlignment(Qt.AlignCenter)
+
+        credential_layout.addWidget(id_title)
+
+        credential_layout.addWidget(self.id_display)
+
+        credential_layout.addWidget(password_title)
+
+        credential_layout.addWidget(self.password_display)
+
+        credential_group.setLayout(credential_layout)
+
+        main_layout.addWidget(credential_group)        
 
         # -------------------------------------------------
         # CONNECTION SETTINGS
