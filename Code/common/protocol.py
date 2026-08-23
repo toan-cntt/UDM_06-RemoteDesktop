@@ -19,7 +19,7 @@ CMD_AUTH_RES    = 11  # Server phản hồi kết quả xác thực (1 = Thành 
 def send_message(sock: socket.socket, cmd_type: int, payload: bytes = b''):
     """Hàm đóng gói dữ liệu và gửi đi"""
     # Tính độ dài của cục dữ liệu (payload)
-    payload_length = len(payload)
+    payload_length = len(payload)  
     
     # Đóng gói Header (Mã lệnh + Độ dài)
     header = struct.pack(HEADER_FORMAT, cmd_type, payload_length)

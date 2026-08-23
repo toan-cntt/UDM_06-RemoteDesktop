@@ -1,5 +1,7 @@
 import sys
 import socket
+import json
+import os
 
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
@@ -17,8 +19,8 @@ from PyQt5.QtWidgets import (
 from common.protocol import (
     send_message,
     receive_message,
-    CMD_REQ_CONNECT,
-    CMD_RES_CONNECT,
+    CMD_AUTH_REQ,
+    CMD_AUTH_RES,
     CMD_SCREEN
 )
 
@@ -54,6 +56,24 @@ class ScreenReceiver(QThread):
         self.running = False
 
 app = QApplication(sys.argv)
+# =========================
+# LOAD STYLE QSS
+# =========================
+
+style_path = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "style.qss"
+)
+
+try:
+    with open(style_path, "r", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
+
+    print("[CLIENT] Đã load style.qss")
+
+except Exception as e:
+    print(f"[CLIENT] Không thể load style.qss: {e}")
 
 client_socket = None
 screen_receiver = None
@@ -207,16 +227,22 @@ def update_screen(frame_data):
 # =========================
 # KẾT NỐI SERVER
 # =========================
-
 def connect_to_server():
     global client_socket
     global screen_receiver
 
     ip = ip_input.text().strip()
     port_text = port_input.text().strip()
+    partner_id = partner_id_input.text().strip()
+    password = password_input.text()
 
+    # Kiểm tra dữ liệu nhập
     if not ip or not port_text:
         status.showMessage("Vui lòng nhập IP và Port")
+        return
+
+    if not partner_id or not password:
+        status.showMessage("Vui lòng nhập ID đối tác và mật khẩu")
         return
 
     try:
@@ -233,22 +259,41 @@ def connect_to_server():
 
         print("[CLIENT] Kết nối TCP thành công!")
 
-        # Gửi yêu cầu kết nối
+        # =========================
+        # GỬI THÔNG TIN XÁC THỰC
+        # =========================
+
+        auth_data = {
+            "id": partner_id,
+            "password": password
+        }
+
+        auth_payload = json.dumps(auth_data).encode("utf-8")
+
+        print(f"[CLIENT] Gửi yêu cầu xác thực ID: {partner_id}")
+
         send_message(
             client_socket,
-            CMD_REQ_CONNECT
+            CMD_AUTH_REQ,
+            auth_payload
         )
 
-        # Chờ Server phản hồi
+        # =========================
+        # CHỜ SERVER PHẢN HỒI
+        # =========================
+
         cmd_type, payload = receive_message(client_socket)
 
-        if cmd_type == CMD_RES_CONNECT and payload == b'\x01':
+        if cmd_type == CMD_AUTH_RES and payload == b'\x01':
 
-            status.showMessage("Đã kết nối")
+            status.showMessage("Đã xác thực và kết nối")
 
-            print("[CLIENT] Server đã cho phép!")
+            print("[CLIENT] Xác thực thành công!")
 
-            # Tạo thread nhận màn hình
+            # =========================
+            # TẠO THREAD NHẬN MÀN HÌNH
+            # =========================
+
             screen_receiver = ScreenReceiver(client_socket)
 
             screen_receiver.frame_received.connect(
@@ -266,8 +311,10 @@ def connect_to_server():
         else:
 
             status.showMessage(
-                "Server từ chối kết nối"
+                "ID hoặc mật khẩu không đúng"
             )
+
+            print("[CLIENT] Xác thực thất bại!")
 
             client_socket.close()
             client_socket = None
