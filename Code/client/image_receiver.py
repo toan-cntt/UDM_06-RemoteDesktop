@@ -29,7 +29,7 @@ class ImageReceiverThread(QThread):
                 )
 
                 # Socket bị đóng / mất kết nối
-                if not cmd_type:
+                if cmd_type is None:
                     break
 
                 # Chỉ xử lý packet màn hình
@@ -58,6 +58,7 @@ class ImageReceiverThread(QThread):
 
         finally:
 
+            self.running = False
             self.receiver_stopped.emit()
 
     def stop(self):
