@@ -56,6 +56,39 @@ ip_layout.addWidget(ip_label)
 ip_layout.addWidget(ip_input)
 
 main_layout.addLayout(ip_layout)
+# =========================
+# ID ĐỐI TÁC
+# =========================
+
+partner_id_layout = QHBoxLayout()
+
+partner_id_label = QLabel("ID đối tác:")
+
+partner_id_input = QLineEdit()
+partner_id_input.setPlaceholderText("Nhập ID đối tác")
+
+partner_id_layout.addWidget(partner_id_label)
+partner_id_layout.addWidget(partner_id_input)
+
+main_layout.addLayout(partner_id_layout)
+
+
+# =========================
+# MẬT KHẨU
+# =========================
+
+password_layout = QHBoxLayout()
+
+password_label = QLabel("Mật khẩu:")
+
+password_input = QLineEdit()
+password_input.setPlaceholderText("Nhập mật khẩu")
+password_input.setEchoMode(QLineEdit.Password)
+
+password_layout.addWidget(password_label)
+password_layout.addWidget(password_input)
+
+main_layout.addLayout(password_layout)
 
 
 # =========================
@@ -126,16 +159,23 @@ main_layout.addWidget(screen_label)
 # =========================
 
 """Thay đổi hàm update screen"""
-def update_screen(image):
-    pixmap = QPixmap.fromImage(image)
+def update_screen(frame_data):
+    image = QImage()
 
-    scaled_pixmap = pixmap.scaled(
-        screen_label.size(),
-        Qt.KeepAspectRatio,
-        Qt.SmoothTransformation
-    )
+    if image.loadFromData(frame_data, "JPEG"):
 
-    screen_label.setPixmap(scaled_pixmap)
+        pixmap = QPixmap.fromImage(image)
+
+        scaled_pixmap = pixmap.scaled(
+            screen_label.size(),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        )
+
+        screen_label.setPixmap(scaled_pixmap)
+
+    else:
+        print("[CLIENT] Không thể đọc frame JPEG")
 
 
 # =========================
@@ -243,7 +283,7 @@ def disconnect_from_server():
 
         try:
             screen_receiver.wait(1000)
-        except Exception:
+        except :
             pass
 
         screen_receiver = None
@@ -280,30 +320,6 @@ disconnect_button.clicked.connect(disconnect_from_server)
 # =========================
 # CHẠY GUI
 # =========================
-
-window.show()
-
-sys.exit(app.exec_())
-
-
-connect_button.clicked.connect(
-    connect_to_server
-)
-
-disconnect_button.clicked.connect(
-    disconnect_from_server
-)
-
-
-# =========================
-# CHẠY GUI
-# =========================
-
-#Kết nối sreen label với Event Filter
-input_filter = InputEventFilter(client_socket)
-screen_label.installEventFilter(input_filter)
-screen_label.setMouseTracking(True)
-
 
 window.show()
 
