@@ -16,9 +16,11 @@ from PyQt5.QtWidgets import (
     QMessageBox
 )
 
-from server_core import start_server
-
-
+from server_core import start_server, stop_server
+from server.auth import (
+    init_credentials,
+    regenerate_password
+)
 # =========================================================
 # LOG
 # =========================================================
@@ -44,8 +46,13 @@ class HostGUI(QWidget):
 
         super().__init__()
 
+        # KHỞI TẠO ID / PASSWORD
+        self.host_id, self.host_password = init_credentials()
+
         self.running = False
         self.server_thread = None
+
+        self.stop_event = threading.Event() 
 
         # Kết quả Accept / Reject
         self.connection_result = None
@@ -109,7 +116,7 @@ class HostGUI(QWidget):
 
         id_title.setObjectName("credentialTitle")
 
-        self.id_display = QLabel("123456")
+        self.id_display = QLabel(self.host_id)
 
         self.id_display.setObjectName("credentialValue")
 
@@ -120,11 +127,20 @@ class HostGUI(QWidget):
 
         password_title.setObjectName("credentialTitle")
 
-        self.password_display = QLabel("1234")
+        self.password_display = QLabel(self.host_password)
 
         self.password_display.setObjectName("credentialValue")
 
         self.password_display.setAlignment(Qt.AlignCenter)
+
+        # ĐỔI MẬT KHẨU
+        self.change_password_button = QPushButton(
+            "ĐỔI MẬT KHẨU"
+        )
+
+        self.change_password_button.clicked.connect(
+            self.change_password
+        )
 
         credential_layout.addWidget(id_title)
 
@@ -133,6 +149,8 @@ class HostGUI(QWidget):
         credential_layout.addWidget(password_title)
 
         credential_layout.addWidget(self.password_display)
+
+        credential_layout.addWidget(self.change_password_button)
 
         credential_group.setLayout(credential_layout)
 
@@ -326,6 +344,19 @@ class HostGUI(QWidget):
             main_layout
         )
 
+    #  ĐỔI MẬT KHẨU
+
+    def change_password(self):
+
+        self.host_password = regenerate_password()
+
+        self.password_display.setText(
+            self.host_password
+        )
+
+        self.add_log(
+            "Password đã được đổi"
+        )
     # =====================================================
     # LOG
     # =====================================================
@@ -349,6 +380,7 @@ class HostGUI(QWidget):
         port = self.port_input.value()
 
         self.running = True
+        self.stop_event.clear()
 
         self.start_button.setEnabled(
             False
@@ -393,7 +425,8 @@ class HostGUI(QWidget):
                 port=port,
                 on_connection_request=(
                     self.on_connection_request
-                )
+                ),
+                stop_event=self.stop_event
             )
 
         except Exception as e:
@@ -550,6 +583,14 @@ class HostGUI(QWidget):
     def stop_server(self):
 
         self.running = False
+        self.stop_event.set()
+
+        try:
+          stop_server()
+        except Exception as e:
+          self.add_log(
+             f"STOP SERVER ERROR: {e}"
+         )
 
         self.add_log(
             "Host stopped"
@@ -590,6 +631,14 @@ class HostGUI(QWidget):
     def emergency_stop(self):
 
         self.running = False
+        self.stop_event.set()
+
+        try:
+            stop_server()
+        except Exception as e:
+            self.add_log(
+                f"EMERGENCY STOP ERROR: {e}"
+            )
 
         self.connection_result = False
 
@@ -636,10 +685,19 @@ class HostGUI(QWidget):
 
         self.running = False
 
+        self.stop_event.set()
+
         self.connection_result = False
 
+        try:
+            stop_server()
+        except Exception as e:
+            logging.error(
+               f"Close server error: {e}"
+          )
+
         logging.info(
-            "Host GUI closed"
+           "Host GUI closed"
         )
 
         event.accept()

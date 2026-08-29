@@ -66,7 +66,7 @@ def send_screen(sct, sock, quality=70, scale=0.75):
     )
 
 
-def screen_stream(sock, fps=20, quality=70, scale=0.75):
+def screen_stream(sock, fps=20, quality=70, scale=0.75, stop_event=None):
     # Liên tục chụp và gửi màn hình
 
     delay = 1 / fps
@@ -75,17 +75,42 @@ def screen_stream(sock, fps=20, quality=70, scale=0.75):
     with mss.MSS() as sct:
 
         while True:
+
+            # Kiểm tra yêu cầu dừng từ Host GUI
+            if stop_event and stop_event.is_set():
+                print("[SCREEN] Nhận yêu cầu dừng truyền màn hình.")
+                break
+
             start_time = time.perf_counter()
 
-            send_screen(
-                sct,
-                sock,
-                quality=quality,
-                scale=scale
-            )
+            try:
+                send_screen(
+                    sct,
+                    sock,
+                    quality=quality,
+                    scale=scale
+                )
+
+            except (ConnectionResetError, BrokenPipeError, OSError):
+                print("[SCREEN] Client đã ngắt kết nối.")
+                break
+
+            except Exception as e:
+                print(f"[SCREEN] Lỗi truyền màn hình: {e}")
+                break
 
             elapsed = time.perf_counter() - start_time
             sleep_time = delay - elapsed
 
             if sleep_time > 0:
-                time.sleep(sleep_time)
+
+                # Chia nhỏ thời gian sleep để có thể
+                # phản ứng nhanh khi Stop khẩn cấp
+                if stop_event:
+                    stop_event.wait(sleep_time)
+
+                    if stop_event.is_set():
+                        print("[SCREEN] Đã dừng luồng truyền màn hình.")
+                        break
+                else:
+                    time.sleep(sleep_time)
