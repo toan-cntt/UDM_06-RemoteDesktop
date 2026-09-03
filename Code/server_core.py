@@ -12,30 +12,30 @@ from server.input_executor import process_input_command
 from server.screen_stream import screen_stream  # Hàm chụp & truyền ảnh chuẩn của TV2
 
 def start_server(ip="0.0.0.0", port=9999, on_connection_request=None):
-    # 1. Khởi tạo Socket TCP lắng nghe kết nối[cite: 5]
+    # 1. Khởi tạo Socket TCP lắng nghe kết nối
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((ip, port))
     server.listen(1)
     print(f"[SERVER] Đang lắng nghe tại {ip}:{port}...")
 
-    # 2. Chấp nhận kết nối từ Client[cite: 5]
+    # 2. Chấp nhận kết nối từ Client
     client_socket, client_address = server.accept()
     print(f"[SERVER] Đã kết nối với {client_address}")
 
-    # 3. Chờ lệnh xin phép kết nối từ Client[cite: 5]
+    # 3. Chờ lệnh xin phép kết nối từ Client
     cmd, payload = receive_message(client_socket)
     
     if cmd == CMD_REQ_CONNECT:
         print("[SERVER] Có người muốn xem màn hình!")
         
-        # Gọi Callback lên GUI của TV5 để bật Pop-up[cite: 5]
+        # Gọi Callback lên GUI của TV5 để bật Pop-up
         if on_connection_request:
             result = on_connection_request(client_address[0])
         else:
-            result = False  # Không có GUI thì mặc định TỪ CHỐI[cite: 5]
+            result = False  # Không có GUI thì mặc định TỪ CHỐI
 
         if result:
-            # GUI CHẤP NHẬN: Phản hồi về Client[cite: 5]
+            # GUI CHẤP NHẬN: Phản hồi về Client
             send_message(
                 client_socket,
                 CMD_RES_CONNECT,
@@ -64,7 +64,7 @@ def start_server(ip="0.0.0.0", port=9999, on_connection_request=None):
                     if not msg_cmd:
                         break
                     
-                    # Truyền dữ liệu phím/chuột cho TV3 xử lý[cite: 5]
+                    # Truyền dữ liệu phím/chuột cho TV3 xử lý
                     if msg_cmd in (CMD_MOUSE, CMD_KEY):
                         process_input_command(msg_cmd, msg_payload)
                         
@@ -73,7 +73,7 @@ def start_server(ip="0.0.0.0", port=9999, on_connection_request=None):
                     break
 
         else:
-            # GUI TỪ CHỐI: Phản hồi mã 0[cite: 5]
+            # GUI TỪ CHỐI: Phản hồi mã 0
             send_message(
                 client_socket,
                 CMD_RES_CONNECT,

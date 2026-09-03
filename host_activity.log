@@ -1,0 +1,9 @@
+2026-08-09 21:46:54,739 | INFO | Host server started on port 5000
+2026-08-09 21:48:45,851 | WARNING | EMERGENCY STOP activated
+2026-08-09 21:48:45,853 | INFO | Host application closed
+2026-08-09 21:59:26,760 | INFO | Host started on port 9999
+2026-08-09 21:59:29,337 | INFO | Client disconnected
+2026-08-09 21:59:29,338 | INFO | Host stopped
+2026-08-09 21:59:29,342 | INFO | ERROR: [WinError 10038] An operation was attempted on something that is not a socket
+2026-08-09 22:15:09,528 | INFO | Client disconnected
+2026-08-09 22:15:09,529 | INFO | Host GUI closed

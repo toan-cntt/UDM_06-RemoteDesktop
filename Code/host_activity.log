@@ -1,0 +1,11 @@
+2026-08-21 17:19:33,765 | INFO | Host started on port 9999
+2026-08-21 17:20:29,787 | INFO | Connection request from 127.0.0.1
+2026-08-21 17:20:32,583 | INFO | REJECTED: 127.0.0.1
+2026-08-21 17:21:44,192 | INFO | Host stopped
+2026-08-21 17:21:45,490 | INFO | Host started on port 9999
+2026-08-21 17:21:46,916 | INFO | Connection request from 127.0.0.1
+2026-08-21 17:21:48,956 | INFO | ACCEPTED: 127.0.0.1
+2026-08-21 17:21:51,492 | INFO | Host stopped
+2026-08-21 17:21:56,020 | INFO | Host started on port 9999
+2026-08-21 17:21:56,025 | INFO | SERVER ERROR: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted
+2026-08-21 17:24:09,555 | INFO | Host stopped
