@@ -251,13 +251,13 @@ Host nhận command thông qua TCP Socket và chuyển đến module xử lý in
 - Xử lý Mouse / Keyboard event.
 - Kiểm thử Input Listener.
 
-### Thành viên 4 - Lê Ly Na
+### Thành viên 4 - Phan Minh Thư
 
 - Xây dựng chức năng chụp màn hình.
 - Xây dựng Screen Streaming.
 - Xử lý truyền hình ảnh qua Socket.
 
-### Thành viên 5 - Phan Minh Thu
+### Thành viên 5 - Lê Ly Na
 
 - Xây dựng giao diện Host.
 - Xử lý trạng thái kết nối.
