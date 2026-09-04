@@ -238,8 +238,8 @@ class InputEventFilter(QObject):
             Qt.Key_Insert: "insert",
             Qt.Key_Home: "home",
             Qt.Key_End: "end",
-            Qt.Key_PageUp: "pageup",
-            Qt.Key_PageDown: "pagedown",
+            Qt.Key_PageUp: "page_up",
+            Qt.Key_PageDown: "page_down",
 
             Qt.Key_Left: "left",
             Qt.Key_Right: "right",
@@ -249,7 +249,7 @@ class InputEventFilter(QObject):
             Qt.Key_Shift: "shift",
             Qt.Key_Control: "ctrl",
             Qt.Key_Alt: "alt",
-            Qt.Key_Meta: "win",
+            Qt.Key_Meta: "cmd",
 
             Qt.Key_Space: "space"
         }
