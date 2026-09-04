@@ -1,6 +1,7 @@
 import sys
 import socket
 import json
+import os
 
 from client.image_receiver import ImageReceiverThread
 from client.input_listener import InputEventFilter
@@ -30,6 +31,22 @@ from common.protocol import (
 )
 
 app = QApplication(sys.argv)
+
+# =========================
+# LOAD STYLE QSS (TỪ TV6)
+# =========================
+style_path = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "style.qss"
+)
+
+try:
+    with open(style_path, "r", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
+    print("[CLIENT] Đã load style.qss")
+except Exception as e:
+    print(f"[CLIENT] Không thể load style.qss: {e}")
 
 client_socket = None
 screen_receiver = None
@@ -142,8 +159,9 @@ def connect_to_server():
         auth_data = {"id": partner_id, "password": password}
         auth_payload = json.dumps(auth_data).encode("utf-8")
         send_message(client_socket, CMD_AUTH_REQ, auth_payload)
+        print(f"[CLIENT] Đã gửi yêu cầu xác thực ID: {partner_id}")
 
-        # 2. CHỜ PHẢN HỒI XÁC THỰC
+        # 2. CHỜ PHẢN HỒI XÁC THỰC TỪ SERVER
         cmd_type, payload = receive_message(client_socket)
         
         if cmd_type == CMD_AUTH_RES and payload == b'\x01':
@@ -153,11 +171,18 @@ def connect_to_server():
 
             # MỞ LUỒNG NHẬN ẢNH CỦA TV4
             screen_receiver = ImageReceiverThread(client_socket)
-            screen_receiver.image_received.connect(update_screen)
+            
+            # Xử lý kết nối signal linh hoạt
+            if hasattr(screen_receiver, 'image_received'):
+                screen_receiver.image_received.connect(update_screen)
+            elif hasattr(screen_receiver, 'change_pixmap_signal'):
+                screen_receiver.change_pixmap_signal.connect(update_screen)
+
             if hasattr(screen_receiver, 'connection_error'):
                 screen_receiver.connection_error.connect(
                     lambda err: status.showMessage(f"Lỗi: {err}")
                 )
+            
             screen_receiver.start()
 
             # TÍCH HỢP BỘ LẮNG NGHE SỰ KIỆN CỦA TRIỆU
