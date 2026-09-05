@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 host_activity.log 
+=======
+
+__pycache__/
+*.pyc
+*_backup.py
+>>>>>>> origin/proposal/tv3-auth-integration

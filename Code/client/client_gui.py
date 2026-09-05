@@ -111,7 +111,6 @@ main_layout.addWidget(status)
 # =========================
 # KHUNG TRUYỀN HÌNH ẢNH
 # =========================
-# Sử dụng QLabel thuần túy, mọi sự kiện sẽ do InputEventFilter của Triệu xử lý
 screen_label = QLabel()
 screen_label.setText("Remote Screen")
 screen_label.setMinimumSize(800, 450)

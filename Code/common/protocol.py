@@ -11,6 +11,8 @@ CMD_RES_CONNECT = 2   # Phản hồi (1 = OK, 0 = No)
 CMD_SCREEN      = 3   # Dữ liệu ảnh màn hình
 CMD_MOUSE       = 4   # Tọa độ chuột
 CMD_KEY         = 5   # Phím bấm
+CMD_AUTH_REQ    = 10  # Client gửi ID + Password
+CMD_AUTH_RES    = 11  # Server phản hồi xác thực (1 = OK, 0 = FAIL)
 
 # --- [BỔ SUNG SPRINT 2] MÃ LỆNH XÁC THỰC MỚI ---
 CMD_AUTH_REQ    = 10  # Client gửi yêu cầu kết nối kèm theo: JSON chứa ID và Password

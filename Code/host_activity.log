@@ -34,3 +34,14 @@
 2026-09-04 12:42:56,145 | INFO | Host stopped
 2026-09-04 12:43:02,292 | INFO | Host started on port 9999
 2026-09-04 12:43:13,852 | INFO | Host GUI closed
+2026-09-06 04:41:14,774 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=151787
+2026-09-06 04:44:16,163 | INFO | Host started on port 9999
+2026-09-06 04:44:16,164 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=669923
+2026-09-06 04:44:17,540 | WARNING | [AUTH] Xác th\u1ef1c TH\u1ea4T B\u1ea0I cho ID=151787
+2026-09-06 04:44:24,711 | INFO | [AUTH] \u0110ã \u0111\u1ed5i m\u1eadt kh\u1ea9u m\u1edbi
+2026-09-06 04:44:24,715 | INFO | Password \u0111ã \u0111\u01b0\u1ee3c \u0111\u1ed5i
+2026-09-06 04:47:05,910 | INFO | Host GUI closed
+2026-09-06 04:48:03,861 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=148193
+2026-09-06 04:48:24,777 | INFO | Host started on port 9999
+2026-09-06 04:48:40,435 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=148193
+2026-09-06 04:49:05,199 | INFO | Host GUI closed
