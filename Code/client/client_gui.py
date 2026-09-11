@@ -33,25 +33,19 @@ from common.protocol import (
 app = QApplication(sys.argv)
 
 # =========================
-# LOAD STYLE QSS (TỪ TV6)
+# LOAD STYLE QSS
 # =========================
-style_path = os.path.join(
-    os.path.dirname(__file__),
-    "..",
-    "style.qss"
-)
-
+style_path = os.path.join(os.path.dirname(__file__), "..", "style.qss")
 try:
     with open(style_path, "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
-    print("[CLIENT] Đã load style.qss")
 except Exception as e:
-    print(f"[CLIENT] Không thể load style.qss: {e}")
+    pass
 
 client_socket = None
 screen_receiver = None
 authenticated = False
-input_filter = None  # Biến toàn cục lưu trữ bộ lọc sự kiện của Triệu
+input_filter = None
 
 window = QWidget()
 window.setWindowTitle("Remote Desktop Client")
@@ -92,7 +86,6 @@ port_layout = QHBoxLayout()
 port_label = QLabel("Port:")
 port_input = QLineEdit()
 port_input.setText("9999")
-port_input.setPlaceholderText("Ví dụ: 9999")
 port_layout.addWidget(port_label)
 port_layout.addWidget(port_input)
 main_layout.addLayout(port_layout)
@@ -119,21 +112,14 @@ screen_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 screen_label.setFocusPolicy(Qt.StrongFocus)
 main_layout.addWidget(screen_label)
 
-# =========================
-# HIỂN THỊ FRAME TỪ TV4
-# =========================
 def update_screen(qt_img):
     if isinstance(qt_img, QImage):
         pixmap = QPixmap.fromImage(qt_img)
-        scaled_pixmap = pixmap.scaled(
-            screen_label.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        )
+        scaled_pixmap = pixmap.scaled(screen_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         screen_label.setPixmap(scaled_pixmap)
 
 # =========================
-# LÕI KẾT NỐI
+# LÕI KẾT NỐI (BẢO MẬT KÉP)
 # =========================
 def connect_to_server():
     global client_socket, screen_receiver, authenticated, input_filter
@@ -152,98 +138,78 @@ def connect_to_server():
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         status.showMessage(f"Đang kết nối tới {ip}:{port}...")
         client_socket.connect((ip, port))
-        print("[CLIENT] Kết nối TCP thành công!")
 
-        # 1. GỬI YÊU CẦU XÁC THỰC
+        # --- BƯỚC 1: XÁC THỰC MẬT KHẨU ---
         auth_data = {"id": partner_id, "password": password}
-        auth_payload = json.dumps(auth_data).encode("utf-8")
-        send_message(client_socket, CMD_AUTH_REQ, auth_payload)
-        print(f"[CLIENT] Đã gửi yêu cầu xác thực ID: {partner_id}")
-
-        # 2. CHỜ PHẢN HỒI XÁC THỰC TỪ SERVER
+        send_message(client_socket, CMD_AUTH_REQ, json.dumps(auth_data).encode("utf-8"))
+        
         cmd_type, payload = receive_message(client_socket)
         
         if cmd_type == CMD_AUTH_RES and payload == b'\x01':
-            authenticated = True
-            print("[CLIENT] Xác thực thành công! Bắt đầu nhận ảnh.")
-            status.showMessage("Đã kết nối - đang điều khiển màn hình")
-
-            # MỞ LUỒNG NHẬN ẢNH CỦA TV4
-            screen_receiver = ImageReceiverThread(client_socket)
+            status.showMessage("Mật khẩu đúng! Đang chờ Host cấp quyền...")
             
-            # Xử lý kết nối signal linh hoạt
-            if hasattr(screen_receiver, 'image_received'):
-                screen_receiver.image_received.connect(update_screen)
-            elif hasattr(screen_receiver, 'change_pixmap_signal'):
-                screen_receiver.change_pixmap_signal.connect(update_screen)
-
-            if hasattr(screen_receiver, 'connection_error'):
-                screen_receiver.connection_error.connect(
-                    lambda err: status.showMessage(f"Lỗi: {err}")
-                )
+            # --- BƯỚC 2: XIN QUYỀN ĐIỀU KHIỂN (POP-UP) ---
+            send_message(client_socket, CMD_REQ_CONNECT, b"")
+            cmd_type2, payload2 = receive_message(client_socket)
             
-            screen_receiver.start()
+            if cmd_type2 == CMD_RES_CONNECT and payload2 == b'\x01':
+                authenticated = True
+                status.showMessage("Đã kết nối - đang điều khiển màn hình")
 
-            # TÍCH HỢP BỘ LẮNG NGHE SỰ KIỆN CỦA TRIỆU
-            input_filter = InputEventFilter(client_socket)
-            screen_label.installEventFilter(input_filter)
+                # KÍCH HOẠT NHẬN ẢNH VÀ ĐIỀU KHIỂN
+                screen_receiver = ImageReceiverThread(client_socket)
+                if hasattr(screen_receiver, 'image_received'):
+                    screen_receiver.image_received.connect(update_screen)
+                elif hasattr(screen_receiver, 'change_pixmap_signal'):
+                    screen_receiver.change_pixmap_signal.connect(update_screen)
+                screen_receiver.start()
+
+                input_filter = InputEventFilter(client_socket)
+                screen_label.installEventFilter(input_filter)
+            else:
+                authenticated = False
+                status.showMessage("Chủ máy đã TỪ CHỐI kết nối!")
+                client_socket.close()
+                client_socket = None
         else:
             authenticated = False
-            status.showMessage("Mật khẩu/ID không đúng hoặc Host từ chối!")
-            print("[CLIENT] Xác thực thất bại!")
+            status.showMessage("Mã ID hoặc Mật khẩu không đúng!")
             client_socket.close()
             client_socket = None
 
     except Exception as e:
         authenticated = False
         status.showMessage(f"Lỗi kết nối: {e}")
-        print(f"[CLIENT] Lỗi: {e}")
         if client_socket:
-            try:
-                client_socket.close()
-            except:
-                pass
+            try: client_socket.close()
+            except: pass
         client_socket = None
 
 def disconnect_from_server():
     global client_socket, screen_receiver, authenticated, input_filter
     authenticated = False
-
-    # Dọn dẹp bộ lọc sự kiện
     if input_filter is not None:
         screen_label.removeEventFilter(input_filter)
         input_filter = None
-
     if screen_receiver:
         if hasattr(screen_receiver, 'stop'):
             screen_receiver.stop()
-        try:
-            screen_receiver.wait(1000)
-        except:
-            pass
+        try: screen_receiver.wait(1000)
+        except: pass
         screen_receiver = None
-
     if client_socket:
         try:
             client_socket.shutdown(socket.SHUT_RDWR)
             client_socket.close()
-        except:
-            pass
+        except: pass
         client_socket = None
-
     screen_label.clear()
     screen_label.setText("Remote Screen")
     status.showMessage("Đã ngắt kết nối")
 
-# =========================
-# RÀNG BUỘC NÚT BẤM
-# =========================
 connect_button.clicked.connect(connect_to_server)
 disconnect_button.clicked.connect(disconnect_from_server)
 
-# =========================
-# CHẠY GUI
-# =========================
 if __name__ == "__main__":
     window.show()
     sys.exit(app.exec_())

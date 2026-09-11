@@ -49,3 +49,28 @@
 2026-09-06 05:31:27,745 | INFO | Host started on port 9999
 2026-09-06 05:31:29,487 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=195832
 2026-09-06 05:31:40,377 | INFO | Host GUI closed
+2026-09-08 09:42:07,707 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=653911
+2026-09-08 09:42:37,262 | INFO | Host started on port 9999
+2026-09-08 09:42:38,897 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=653911
+2026-09-08 09:43:06,511 | INFO | Host GUI closed
+2026-09-08 11:00:10,008 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=836498
+2026-09-08 11:24:08,949 | INFO | Host GUI closed
+2026-09-08 11:41:30,864 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=590001
+2026-09-08 11:41:57,022 | INFO | Host started on port 9999
+2026-09-08 11:41:59,778 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=590001
+2026-09-08 11:42:10,120 | INFO | Host stopped
+2026-09-08 11:42:19,143 | INFO | Host started on port 10000
+2026-09-08 11:42:20,295 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=590001
+2026-09-08 11:42:24,648 | INFO | Host GUI closed
+2026-09-11 12:16:01,262 | INFO | [AUTH] \u0110ã kh\u1edfi t\u1ea1o thông tin \u0111\u0103ng nh\u1eadp, ID=986788
+2026-09-11 12:16:15,656 | INFO | Host started on port 9999
+2026-09-11 12:16:32,557 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=986788
+2026-09-11 12:16:32,561 | INFO | Connection request from 127.0.0.1
+2026-09-11 12:17:16,959 | INFO | ACCEPTED: 127.0.0.1
+2026-09-11 12:17:35,636 | WARNING | EMERGENCY STOP
+2026-09-11 12:17:35,637 | INFO | !!! NG\u1eaeT KH\u1ea8N C\u1ea4P !!!
+2026-09-11 12:17:45,070 | INFO | Host started on port 9999
+2026-09-11 12:17:48,274 | INFO | [AUTH] Xác th\u1ef1c THÀNH CÔNG cho ID=986788
+2026-09-11 12:17:48,275 | INFO | Connection request from 127.0.0.1
+2026-09-11 12:17:49,421 | INFO | ACCEPTED: 127.0.0.1
+2026-09-11 12:17:53,913 | INFO | Host GUI closed
