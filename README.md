@@ -234,43 +234,42 @@ Host nhận command thông qua TCP Socket và chuyển đến module xử lý in
 
 ### Thành viên 1 - Trần Tấn Toàn
 
-- Xây dựng Core Network.
-- Thiết kế giao tiếp TCP Socket.
-- Xây dựng protocol giao tiếp giữa Client và Server.
-- Tích hợp các module vào luồng chính.
+-  Thiết kế kiến trúc hệ thống Client - Server tổng thể và điều phối kiến trúc đa luồng (Multi-threading).
+-  Chịu trách nhiệm tích hợp mã nguồn (E2E), xử lý xung đột Git (Merge Conflicts) và tối ưu tài nguyên.
+-	Chuẩn hóa giao thức mạng (protocol.py), đồng bộ file thiết kế style.qss và tổng hợp/định dạng cuốn báo cáo.
+
 
 ### Thành viên 2 - Trần Hà Đức Huỳnh
 
-- Xây dựng chức năng thực thi input trên Host.
-- Xử lý sự kiện chuột và bàn phím.
-- Kiểm thử chức năng điều khiển từ xa.
+-	Định nghĩa giao thức truyền nhận TCP và cấu trúc gói tin (Message Header, các mã lệnh CMD).
+-	Lập trình tính năng chụp màn hình thời gian thực bằng mss.
+-	Áp dụng thư viện OpenCV để nén ảnh JPEG, tối ưu hóa băng thông và duy trì tốc độ khung hình (FPS) ổn định.
+
 
 ### Thành viên 3 - Nguyễn Đăng Triều
 
-- Xây dựng chức năng nhận input từ Client.
-- Xử lý Mouse / Keyboard event.
-- Kiểm thử Input Listener.
+-	Xây dựng thuật toán giải mã gói tin và đối soát thông tin đăng nhập (verify_credentials).
+-	Sử dụng thư viện pynput để mô phỏng và thực thi chính xác các thao tác chuột, bàn phím và tổ hợp phím trên máy Host.
+-	Xây dựng và thực thi các kịch bản kiểm thử chức năng (Functional Testing) và kiểm thử độ bền hệ thống.
 
 ### Thành viên 4 - Phan Minh Thư
 
-- Xây dựng chức năng chụp màn hình.
-- Xây dựng Screen Streaming.
-- Xử lý truyền hình ảnh qua Socket.
+-	Xây dựng công thức toán học ánh xạ tọa độ chuột tương đối (X_rel,Y_rel) từ màn hình Client.
+-	Sử dụng QThread và pyqtSignal để tách luồng render hình ảnh bất đồng bộ, chống treo giao diện Client.
+-	Thực hiện đo lường hiệu năng hệ thống (Benchmark) bao gồm CPU, RAM, băng thông và độ trễ.
+
 
 ### Thành viên 5 - Lê Ly Na
 
-- Xây dựng giao diện Host.
-- Xử lý trạng thái kết nối.
-- Xử lý yêu cầu cho phép / từ chối kết nối.
-- Tích hợp Host GUI với Server.
+-	Thiết kế giao diện Host (Dark Mode) và lập trình thuật toán sinh ngẫu nhiên ID (6 số), Mật khẩu (4 số).
+-	Xây dựng cơ chế bảo mật kép (khớp mật khẩu và hộp thoại xác nhận từ chủ máy).
+-  Phát triển tính năng "Ngắt khẩn cấp" và hệ thống ghi nhật ký hoạt động (host_activity.log).
 
 ### Thành viên 6 - Lương Thành Đạt
 
-- Xây dựng giao diện Client.
-- Xây dựng Remote Viewer.
-- Nhận và hiển thị hình ảnh màn hình từ Host.
-- Xử lý luồng cập nhật giao diện.
-- Chuẩn bị tài liệu, README và nội dung trình bày.
+-	Cấu hình giao diện Client (Dark Mode) đồng bộ với hệ thống.
+-	Xây dựng form nhập liệu (IP, Port, ID, Mật khẩu).
+-	Lập trình cơ chế đóng gói dữ liệu đăng nhập vào gói tin CMD_AUTH_REQ và xử lý các phản hồi từ Server (thông báo lỗi/thành công).
 
 ---
 
