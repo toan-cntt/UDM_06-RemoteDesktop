@@ -8,7 +8,7 @@
 | 2 | Trần Hà Đức Huỳnh | 075206023506 |
 | 3 | Nguyễn Đăng Triều | 082206000518 |
 | 4 | Lê Ly Na | 051305008114 |
-| 5 | Phan Minh Thu | 087306015281 |
+| 5 | Phan Minh Thư | 087306015281 |
 | 6 | Lương Thành Đạt | 056206003075 |
 
 **Môn:** Lập trình mạng  
