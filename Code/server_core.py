@@ -128,4 +128,4 @@ def stop_server():
     if current_server_socket:
         try: current_server_socket.close()
         except: pass
-        current_server_socket = None
+        current_server_socket = Noneq
