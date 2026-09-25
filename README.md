@@ -319,7 +319,7 @@ Bao gồm:
 
 Video demo ứng dụng Remote Desktop:
 
-[> Thêm link video demo của nhóm tại đây.](https://drive.google.com/drive/folders/194Af0w-PEqp7UYWMaqXmsxcwTiQercRV?usp=sharing)
+(https://drive.google.com/drive/folders/194Af0w-PEqp7UYWMaqXmsxcwTiQercRV?usp=sharing)
 
 ---
 
